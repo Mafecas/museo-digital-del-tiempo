@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Archivo del Tiempo — Memorias reconstruidas en 3D</title>
+<meta name="description" content="Archivo del Tiempo: fotografía, memoria y reconstrucción fotogramétrica tridimensional. Exposición digital de objetos reconstruidos con Pix4D y explorables en 3D.">
+<meta name="author" content="María Fernanda Castro Casallas, Andrés Ricardo Romero Rodríguez">
+<meta name="theme-color" content="#061417">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23061417'/%3E%3Ccircle cx='32' cy='32' r='19' fill='none' stroke='%23c9a96a' stroke-width='2.5'/%3E%3Cpath d='M32 18v14l9 6' fill='none' stroke='%23e6d5b0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+<!--IMPORTMAP-->
+<script type="importmap">
+{ "imports": {
+  "three": "./assets/vendor/three/three.module.min.js",
+  "three/addons/": "./assets/vendor/three/addons/"
+} }
+</script>
+<!--/IMPORTMAP-->
+</head>
+<body class="is-locked">
+<a class="skip" href="#coleccion">Saltar a la colección</a>
+
+<!-- ============ PANTALLA DE BIENVENIDA ============ -->
+<section id="intro" class="intro" aria-label="Bienvenida">
+  <canvas id="intro-canvas" class="intro__canvas" aria-hidden="true"></canvas>
+  <div class="intro__vignette" aria-hidden="true"></div>
+  <div class="intro__frame" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+  <header class="intro__top">
+    <span class="mono">Exposición digital · 2026</span>
+    <span class="mono intro__top-r">Fotogrametría · Pix4D · WebGL</span>
+  </header>
+
+  <div class="intro__content">
+    <p class="eyebrow intro__eyebrow"><span class="line"></span> Memorias reconstruidas en 3D</p>
+    <h1 class="intro__title">
+      <span class="intro__word"><span>Archivo</span></span>
+      <span class="intro__word intro__word--it"><span>del</span></span>
+      <span class="intro__word"><span>Tiempo</span></span>
+    </h1>
+    <p class="intro__tagline">Objetos del pasado. <em>Memorias del presente.</em> Reconstrucciones para el futuro.</p>
+    <button id="enter" class="btn btn--primary btn--xl" type="button">
+      <span>Ingresar a la exposición</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg>
+    </button>
+    <div class="intro__authors">
+      <div><strong>María Fernanda Castro Casallas</strong><span class="mono">Código 20212025102</span></div>
+      <div><strong>Andrés Ricardo Romero Rodríguez</strong><span class="mono">Código 20231025057</span></div>
+    </div>
+  </div>
+
+  <footer class="intro__bottom">
+    <span class="mono" id="intro-caption">Nube de puntos real · cargando…</span>
+    <span class="mono intro__scroll">Arrastra para girar la nube</span>
+  </footer>
+</section>
+
+<!-- ============ NAVEGACIÓN ============ -->
+<div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+<header class="nav" id="nav">
+  <a class="brand" href="#inicio" aria-label="Archivo del Tiempo, inicio">
+    <svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17"/><circle cx="20" cy="20" r="11" class="o"/><path d="M20 9v11l7 4"/></svg>
+    <span>Archivo <em>del</em> Tiempo</span>
+  </a>
+  <nav class="nav__links" aria-label="Secciones">
+    <a href="#coleccion">Colección</a>
+    <a href="#proyecto">Proyecto</a>
+    <a href="#metodologia">Metodología</a>
+    <a href="#autores">Autores</a>
+    <a href="#creditos">Créditos</a>
+  </nav>
+  <button class="nav__tour" type="button" data-tour aria-label="Iniciar recorrido guiado"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><span>Recorrido</span></button>
+  <button class="nav__toggle" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
+</header>
+<ol class="dots" id="dots" aria-hidden="true"></ol>
+
+<main id="main">
+  <!-- ============ PORTADA ============ -->
+  <section id="inicio" class="hero" data-section="Portada">
+    <canvas class="hero__dust" id="dust" aria-hidden="true"></canvas>
+    <div class="hero__light" aria-hidden="true"></div>
+    <div class="hero__grid wrap">
+      <div class="hero__text">
+        <p class="eyebrow reveal"><span class="line"></span> Colección 2026 · Portafolio de fotografía en 3D</p>
+        <h2 class="hero__title reveal">Catorce objetos.<br><em>Miles de fotografías.</em><br>Infinitas perspectivas.</h2>
+        <p class="hero__lead reveal">Un juguete, dos teléfonos, un sombrero, un reloj, una plancha, un joyero, un estuche de discos, dos billetes, una tasita indígena, un televisor, una radio, una máquina de escribir y un recuerdo de Cartagena: piezas cotidianas convertidas en documentos tridimensionales a partir de miles de fotografías, para que su forma, su textura y sus huellas de uso puedan recorrerse desde cualquier ángulo.</p>
+        <div class="hero__ctas reveal">
+          <a class="btn btn--primary" href="#coleccion"><span>Explorar colección</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14m-6-6 6 6 6-6"/></svg></a>
+          <a class="btn btn--ghost" href="#proyecto"><span>Conocer el proyecto</span></a>
+          <button class="btn btn--ghost btn--tour" type="button" data-tour><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><span>Recorrido guiado</span></button>
+        </div>
+        <dl class="stats reveal">
+          <div><dt>Fotografías</dt><dd><span class="count" data-to="5712">0</span></dd></div>
+          <div><dt>Modelos 3D</dt><dd><span class="count" data-to="14">0</span></dd></div>
+          <div><dt>Con Pix4D</dt><dd><span class="count" data-to="10">0</span></dd></div>
+        </dl>
+      </div>
+      <div class="hero__stage" id="hero-stage" aria-label="Composición de las nueve reconstrucciones"></div>
+    </div>
+    <div class="hero__marquee" aria-hidden="true"><div class="marquee__track" id="marquee"></div></div>
+  </section>
+
+
+  <!-- ============ VITRINA 3D ============ -->
+  <section id="vitrina" class="vitrine" data-section="Vitrina">
+    <div class="wrap">
+      <div class="vitrine__head">
+        <div>
+          <p class="eyebrow reveal"><span class="line"></span> Vitrina en rotación</p>
+          <h2 class="h2 reveal">Cada pieza, <em>girando</em> sobre su propio eje.</h2>
+        </div>
+        <p class="vitrine__note mono reveal">Arrastra para girar · pulsa el nombre para cambiar de pieza</p>
+      </div>
+      <div class="vitrine__grid reveal">
+        <div class="vitrine__stage">
+          <canvas id="showcase" aria-label="Pieza de la colección girando en 3D"></canvas>
+          <span class="vitrine__load mono" id="sc-load">Cargando pieza…</span>
+          <div class="vitrine__cap">
+            <span class="mono" id="sc-exp"></span>
+            <h3 id="sc-name"></h3>
+            <p id="sc-expo"></p>
+            <button class="btn btn--sm btn--primary" type="button" id="sc-open"><span>Abrir expediente</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+          </div>
+        </div>
+        <ol class="vitrine__list" id="sc-list"></ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EL PRECIO DE LA HISTORIA ============ -->
+  <section id="valor" class="value" data-section="El precio de la historia">
+    <div class="value__bg" aria-hidden="true"></div>
+    <div class="wrap">
+      <p class="eyebrow reveal"><span class="line"></span> El precio de la historia</p>
+      <div class="value__lines">
+        <p class="reveal">Un billete de cincuenta pesos oro ya no compra nada.</p>
+        <p class="reveal">Una plancha de hierro ya no plancha.</p>
+        <p class="reveal">Un teléfono que se abría ya no llama.</p>
+        <p class="reveal">Un televisor de tubo ya no sintoniza ningún canal.</p>
+        <p class="reveal">Una máquina de escribir ya no escribe cartas.</p>
+        <p class="value__turn reveal">En el mercado no valen casi nada.<br><em>En la memoria, valen todo lo que guardan.</em></p>
+      </div>
+      <dl class="value__figs reveal">
+        <div><dt>Piezas documentadas</dt><dd><span class="count" data-to="14">0</span></dd></div>
+        <div><dt>Fotografías capturadas</dt><dd><span class="count" data-to="5712">0</span></dd></div>
+        <div><dt>Triángulos en los modelos</dt><dd><span class="count" data-to="8407752">0</span></dd></div>
+      </dl>
+      <p class="value__foot reveal">Fotografiar, medir y reconstruir no aumenta el precio de un objeto: aumenta la posibilidad de que siga existiendo cuando el objeto ya no esté.</p>
+    </div>
+  </section>
+
+  <!-- ============ PROYECTO ============ -->
+  <section id="proyecto" class="project" data-section="Proyecto">
+    <div class="wrap project__grid">
+      <div>
+        <p class="eyebrow reveal"><span class="line"></span> El proyecto</p>
+        <h2 class="h2 reveal">Fotografía, memoria y reconstrucción <em>fotogramétrica</em> tridimensional.</h2>
+      </div>
+      <div class="project__body">
+        <p class="reveal">Los objetos guardan el tiempo de quienes los usaron: el desgaste de una correa, el brillo perdido de un metal, el fieltro que conserva la forma de una cabeza. <strong>Archivo del Tiempo</strong> registra esas huellas mediante fotogrametría digital, la técnica que reconstruye la geometría de un objeto a partir de fotografías tomadas desde múltiples perspectivas.</p>
+        <p class="reveal">Cada pieza fue fotografiada cientos de veces y procesada con <strong>Pix4D</strong> para obtener una malla tridimensional texturizada. El resultado no es una ilustración ni una animación: es la geometría reconstruida del objeto real, que puede examinarse en el navegador con rotación libre, acercamiento e iluminación configurable.</p>
+        <blockquote class="quote reveal">“Conservar un objeto también es conservar la manera en que fue mirado.”</blockquote>
+        <ul class="pillars reveal">
+          <li><span class="mono">01</span><strong>Museo</strong><span>Curaduría y lectura cultural de cada pieza.</span></li>
+          <li><span class="mono">02</span><strong>Ingeniería</strong><span>Captura, georreferenciación y reconstrucción.</span></li>
+          <li><span class="mono">03</span><strong>Experiencia</strong><span>Visualización 3D interactiva en la web.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GALERÍA ============ -->
+  <section id="coleccion" class="gallery" data-section="Colección">
+    <div class="wrap">
+      <div class="gallery__head">
+        <div>
+          <p class="eyebrow reveal"><span class="line"></span> La colección</p>
+          <h2 class="h2 reveal">Catorce piezas. <em>Catorce memorias</em> en tres dimensiones.</h2>
+        </div>
+        <div class="filters reveal" role="tablist" aria-label="Filtrar colección">
+          <button role="tab" class="filter is-active" data-filter="todos" aria-selected="true">Todos <span>14</span></button>
+          <button role="tab" class="filter" data-filter="pix4d" aria-selected="false">Fotogrametría Pix4D <span>10</span></button>
+          <button role="tab" class="filter" data-filter="estudio" aria-selected="false">Modelos de estudio <span>4</span></button>
+          <span class="filter__ink" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="cards" id="cards"></div>
+    </div>
+  </section>
+
+  <!-- ============ METODOLOGÍA ============ -->
+  <section id="metodologia" class="method" data-section="Metodología">
+    <div class="wrap">
+      <p class="eyebrow reveal"><span class="line"></span> Metodología fotogramétrica</p>
+      <h2 class="h2 reveal">Del obturador al visor: <em>cuatro etapas</em> para reconstruir un objeto.</h2>
+      <div class="method__grid">
+        <div class="method__stage reveal" aria-hidden="true">
+          <div class="diagram" id="diagram">
+            <!-- 01 Captura -->
+            <svg class="dg is-active" data-step="0" viewBox="0 0 400 400">
+              <ellipse cx="200" cy="215" rx="150" ry="58" class="dg-orbit"/>
+              <g class="dg-rays">
+                <line x1="200" y1="200" x2="50" y2="215"/><line x1="200" y1="200" x2="94" y2="174"/><line x1="200" y1="200" x2="200" y2="157"/>
+                <line x1="200" y1="200" x2="306" y2="174"/><line x1="200" y1="200" x2="350" y2="215"/><line x1="200" y1="200" x2="306" y2="256"/>
+                <line x1="200" y1="200" x2="200" y2="273"/><line x1="200" y1="200" x2="94" y2="256"/>
+              </g>
+              <path class="dg-obj" d="M160 230 q0-60 40-60 q40 0 40 60 z"/>
+              <g class="dg-cams">
+                <g transform="translate(50 215)"><rect x="-10" y="-7" width="20" height="14" rx="3"/><circle r="4"/></g>
+                <g transform="translate(94 174)"><rect x="-10" y="-7" width="20" height="14" rx="3"/><circle r="4"/></g>
+                <g transform="translate(200 157)"><rect x="-10" y="-7" width="20" height="14" rx="3"/><circle r="4"/></g>
+                <g transform="translate(306 174)"><rect x="-10" y="-7" width="20" height="14" rx="3"/><circle r="4"/></g>
+                <g transform="translate(350 215)"><rect x="-10" y="-7" width="20" height="14" rx="3"/><circle r="4"/></g>
+                <g transform="translate(306 256)"><rect x="-10" y="-7" width="20" height="14" rx="3"/><circle r="4"/></g>
+                <g transform="translate(200 273)"><rect x="-10" y="-7" width="20" height="14" rx="3"/><circle r="4"/></g>
+                <g transform="translate(94 256)"><rect x="-10" y="-7" width="20" height="14" rx="3"/><circle r="4"/></g>
+              </g>
+              <text x="200" y="345" class="dg-label">solapamiento entre perspectivas</text>
+            </svg>
+            <!-- 02 Georreferenciación -->
+            <svg class="dg" data-step="1" viewBox="0 0 400 400">
+              <ellipse cx="200" cy="190" rx="130" ry="122" class="dg-globe"/>
+              <ellipse cx="200" cy="190" rx="130" ry="30" class="dg-lat"/>
+              <ellipse cx="200" cy="140" rx="104" ry="22" class="dg-lat"/>
+              <ellipse cx="200" cy="240" rx="104" ry="22" class="dg-lat"/>
+              <ellipse cx="200" cy="190" rx="60" ry="122" class="dg-lat"/>
+              <ellipse cx="200" cy="190" rx="20" ry="122" class="dg-lat"/>
+              <line x1="200" y1="190" x2="268" y2="108" class="dg-vec"/>
+              <line x1="268" y1="108" x2="292" y2="80" class="dg-h"/>
+              <circle cx="268" cy="108" r="5" class="dg-pt"/>
+              <circle cx="292" cy="80" r="4" class="dg-pt2"/>
+              <text x="300" y="74" class="dg-small">h</text>
+              <text x="200" y="352" class="dg-label">WGS 84 · altura elipsoidal</text>
+            </svg>
+            <!-- 03 Reconstrucción -->
+            <svg class="dg" data-step="2" viewBox="0 0 400 400">
+              <g class="dg-mesh">
+                <path d="M120 270 L160 170 L200 130 L240 170 L280 270 Z"/>
+                <path d="M160 170 L200 210 L240 170 M200 130 L200 210 M120 270 L200 210 L280 270 M160 170 L150 230 L200 210 M240 170 L250 230 L200 210 M120 270 L150 230 M280 270 L250 230 M150 230 L200 270 L250 230 M120 270 L200 270 L280 270 M200 210 L200 270"/>
+              </g>
+              <g class="dg-pts">
+                <circle cx="120" cy="270" r="3.5"/><circle cx="160" cy="170" r="3.5"/><circle cx="200" cy="130" r="3.5"/><circle cx="240" cy="170" r="3.5"/>
+                <circle cx="280" cy="270" r="3.5"/><circle cx="200" cy="210" r="3.5"/><circle cx="150" cy="230" r="3.5"/><circle cx="250" cy="230" r="3.5"/><circle cx="200" cy="270" r="3.5"/>
+              </g>
+              <text x="200" y="345" class="dg-label">nube densa → malla → textura</text>
+            </svg>
+            <!-- 04 Visualización -->
+            <svg class="dg" data-step="3" viewBox="0 0 400 400">
+              <rect x="70" y="90" width="260" height="200" rx="12" class="dg-win"/>
+              <line x1="70" y1="118" x2="330" y2="118" class="dg-win"/>
+              <circle cx="88" cy="104" r="4" class="dg-pt2"/><circle cx="102" cy="104" r="4" class="dg-pt2"/><circle cx="116" cy="104" r="4" class="dg-pt2"/>
+              <g class="dg-cube"><path d="M200 150 L240 172 L240 218 L200 240 L160 218 L160 172 Z M160 172 L200 194 L240 172 M200 194 L200 240"/></g>
+              <path d="M150 262 q50 16 100 0" class="dg-orbit2"/>
+              <text x="200" y="345" class="dg-label">GLB · Three.js · WebGL</text>
+            </svg>
+          </div>
+        </div>
+        <ol class="steps" id="steps">
+          <li class="step is-active reveal" data-step="0" tabindex="0">
+            <span class="step__n mono">01</span>
+            <div><h3>Captura fotográfica</h3><p>Obtención de fotografías desde diferentes perspectivas, procurando suficiente solapamiento entre imágenes para que cada punto del objeto aparezca en varias tomas.</p></div>
+          </li>
+          <li class="step reveal" data-step="1" tabindex="0">
+            <span class="step__n mono">02</span>
+            <div><h3>Georreferenciación</h3><p>Registro de información espacial mediante el sistema WGS 84 y alturas elipsoidales, cuando está disponible en los metadatos de captura.</p></div>
+          </li>
+          <li class="step reveal" data-step="2" tabindex="0">
+            <span class="step__n mono">03</span>
+            <div><h3>Reconstrucción tridimensional</h3><p>Procesamiento de las fotografías mediante Pix4D para generar la geometría del objeto y sus texturas a partir de la correspondencia entre imágenes.</p></div>
+          </li>
+          <li class="step reveal" data-step="3" tabindex="0">
+            <span class="step__n mono">04</span>
+            <div><h3>Visualización digital</h3><p>Publicación del modelo tridimensional en un visor web para su exploración y documentación desde cualquier dispositivo.</p></div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="pipeline reveal" aria-label="Flujo de archivos">
+        <p class="mono pipeline__t">Flujo de archivos de este portafolio</p>
+        <ol>
+          <li><strong>Fotografías</strong><span>372 – 712 por objeto</span></li>
+          <li><strong>Pix4D</strong><span>malla simplificada</span></li>
+          <li><strong>OBJ · MTL · FBX</strong><span>≈ 1 000 000 caras · textura 8192 px</span></li>
+          <li><strong>Orientación y base</strong><span>plano de apoyo, centrado y base circular</span></li>
+          <li><strong>GLB mejorado 8K</strong><span>base rellenada · textura 8192 px realzada</span></li>
+          <li><strong>Visor web</strong><span>Three.js · WebGL</span></li>
+        </ol>
+      </div>
+
+      <div class="registry reveal">
+        <p class="mono pipeline__t">Registro fotográfico por expediente</p>
+        <div id="registry"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ AUTORES: BIOGRAFÍAS ============ -->
+  <section id="autores" class="bios" data-section="Autores">
+    <div class="wrap">
+      <div class="bios__head">
+        <p class="eyebrow reveal"><span class="line"></span> Autores · Ingeniería Catastral y Geodesia</p>
+        <h2 class="h2 reveal">Quienes miran <em>el territorio</em> en tres dimensiones.</h2>
+        <p class="bios__lead reveal">Mueve el cursor sobre cada retrato: la imagen gana profundidad, como los objetos de la colección cuando se recorren en 3D.</p>
+      </div>
+
+      <article class="bio reveal" data-bio="maria">
+        <div class="bio__stage" data-depth-stage>
+          <div class="bio__card">
+            <div class="bio__back" aria-hidden="true"></div>
+            <svg class="bio__orbit bio__orbit--back" viewBox="0 0 400 140" aria-hidden="true"><ellipse cx="200" cy="70" rx="186" ry="52"/><g class="cams"><circle cx="14" cy="70" r="3.4"/><circle cx="72" cy="31" r="3.4"/><circle cx="200" cy="18" r="3.4"/><circle cx="328" cy="31" r="3.4"/><circle cx="386" cy="70" r="3.4"/></g></svg>
+            <canvas class="bio__canvas" data-img="assets/images/autores/maria.webp" data-depth="assets/images/autores/maria-profundidad.png" aria-hidden="true"></canvas>
+            <img class="bio__img" src="assets/images/autores/maria.webp" alt="Retrato de María Fernanda Castro Casallas" loading="lazy" decoding="async" width="720" height="960">
+            <svg class="bio__orbit bio__orbit--front" viewBox="0 0 400 140" aria-hidden="true"><path d="M14 70 A186 52 0 0 0 386 70"/><g class="cams"><circle cx="72" cy="109" r="3.4"/><circle cx="200" cy="122" r="3.4"/><circle cx="328" cy="109" r="3.4"/></g></svg>
+            <span class="bio__tag mono">Autora · 01</span>
+          </div>
+        </div>
+        <div class="bio__text">
+          <p class="mono bio__code">Código 20212025102</p>
+          <h3>María Fernanda Castro Casallas</h3>
+          <p class="bio__role">Estudiante de Ingeniería Catastral y Geodesia</p>
+          <p>Soy una persona creativa, curiosa y apasionada por la naturaleza y los animales. Me gusta explorar nuevas ideas, aprender constantemente y encontrar formas innovadoras de comprender el mundo que nos rodea.</p>
+          <p>Como estudiante de Ingeniería Catastral y Geodesia, me interesan especialmente el catastro, la geodesia, el análisis espacial y el estudio del territorio. Considero que estas áreas permiten comprender la relación entre las personas, el espacio geográfico y el medio ambiente, contribuyendo a una mejor planificación y gestión territorial.</p>
+          <p>Me motiva combinar la creatividad con el conocimiento científico y tecnológico para desarrollar nuevas perspectivas y soluciones a los desafíos del territorio.</p>
+          <ul class="bio__chips" aria-label="Áreas de interés"><li>Catastro</li><li>Geodesia</li><li>Análisis espacial</li><li>Naturaleza</li><li>Medio ambiente</li><li>Innovación</li></ul>
+          <blockquote class="quote bio__quote">“Comprender el territorio es el primer paso para transformar nuestro entorno.”</blockquote>
+        </div>
+      </article>
+
+      <article class="bio bio--rev reveal" data-bio="andres">
+        <div class="bio__stage" data-depth-stage>
+          <div class="bio__card">
+            <div class="bio__back" aria-hidden="true"></div>
+            <svg class="bio__orbit bio__orbit--back" viewBox="0 0 400 140" aria-hidden="true"><ellipse cx="200" cy="70" rx="186" ry="52"/><g class="cams"><circle cx="14" cy="70" r="3.4"/><circle cx="72" cy="31" r="3.4"/><circle cx="200" cy="18" r="3.4"/><circle cx="328" cy="31" r="3.4"/><circle cx="386" cy="70" r="3.4"/></g></svg>
+            <canvas class="bio__canvas" data-img="assets/images/autores/andres.webp" data-depth="assets/images/autores/andres-profundidad.png" aria-hidden="true"></canvas>
+            <img class="bio__img" src="assets/images/autores/andres.webp" alt="Retrato de Andrés Ricardo Romero Rodríguez" loading="lazy" decoding="async" width="720" height="900">
+            <svg class="bio__orbit bio__orbit--front" viewBox="0 0 400 140" aria-hidden="true"><path d="M14 70 A186 52 0 0 0 386 70"/><g class="cams"><circle cx="72" cy="109" r="3.4"/><circle cx="200" cy="122" r="3.4"/><circle cx="328" cy="109" r="3.4"/></g></svg>
+            <span class="bio__tag mono">Autor · 02</span>
+          </div>
+        </div>
+        <div class="bio__text">
+          <p class="mono bio__code">Código 20231025057</p>
+          <h3>Andrés Ricardo Romero Rodríguez</h3>
+          <p class="bio__role">Estudiante de octavo semestre de Ingeniería Catastral y Geodesia</p>
+          <p>Soy un estudiante apasionado por la tecnología, la informática y las matemáticas. Me interesa comprender cómo las herramientas digitales y el razonamiento lógico pueden contribuir al análisis de problemas y al desarrollo de soluciones innovadoras.</p>
+          <p>Durante mi formación en Ingeniería Catastral y Geodesia, he desarrollado un especial interés por la aplicación de los conocimientos matemáticos y tecnológicos al estudio del territorio, el procesamiento de información geográfica y el análisis espacial.</p>
+          <p>Me motiva explorar nuevas tecnologías, fortalecer mis habilidades analíticas y comprender cómo la informática puede integrarse con la ingeniería para optimizar procesos y facilitar la toma de decisiones.</p>
+          <ul class="bio__chips" aria-label="Áreas de interés"><li>Informática</li><li>Matemáticas</li><li>Análisis de datos</li><li>Sistemas de información geográfica</li><li>Tecnología aplicada a la ingeniería</li></ul>
+          <blockquote class="quote bio__quote">“La tecnología y las matemáticas son herramientas para comprender, analizar y transformar el mundo.”</blockquote>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ CRÉDITOS ============ -->
+  <section id="creditos" class="credits" data-section="Créditos">
+    <div class="wrap">
+      <p class="eyebrow reveal"><span class="line"></span> Créditos</p>
+      <h2 class="h2 reveal">Archivo <em>del</em> Tiempo</h2>
+      <p class="credits__sub reveal">Fotografía, memoria y reconstrucción fotogramétrica tridimensional.</p>
+      <p class="credits__names reveal">María Fernanda Castro Casallas · Código 20212025102<br>Andrés Ricardo Romero Rodríguez · Código 20231025057</p>
+      <dl class="credits__meta reveal">
+        <div><dt>Año</dt><dd>2026</dd></div>
+        <div><dt>Reconstrucción</dt><dd>Pix4D</dd></div>
+        <div><dt>Visualización</dt><dd>Three.js · WebGL</dd></div>
+        <div><dt>Formatos</dt><dd>OBJ · MTL · FBX · JPG · GLB</dd></div>
+      </dl>
+    </div>
+    <footer class="footer wrap">
+      <span>Archivo del Tiempo © 2026</span>
+      <span class="mono" id="edition-note">Portafolio completo 3D</span>
+      <a href="#inicio">Volver al inicio ↑</a>
+    </footer>
+  </section>
+</main>
+
+<!-- ============ EXPEDIENTE (FICHA) ============ -->
+<div id="dossier" class="dossier" role="dialog" aria-modal="true" aria-labelledby="d-title" hidden>
+  <div class="dossier__bar">
+    <button class="dbtn" id="d-close" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg><span>Colección</span></button>
+    <span class="mono dossier__id" id="d-id"></span>
+    <div class="dossier__nav">
+      <button class="dbtn dbtn--icon" id="d-prev" type="button" aria-label="Objeto anterior"><svg viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button>
+      <span class="mono" id="d-count"></span>
+      <button class="dbtn tourbtn" id="d-tour" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><span>Pausar recorrido</span></button>
+      <button class="dbtn dbtn--icon" id="d-next" type="button" aria-label="Objeto siguiente"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button>
+    </div>
+  </div>
+  <div class="tourbar" id="tourbar" hidden><span></span></div>
+  <div class="dossier__scroll" id="d-scroll">
+    <div class="dossier__inner" id="d-inner"></div>
+  </div>
+</div>
+
+<!-- ============ LIGHTBOX ============ -->
+<div id="lightbox" class="lightbox" hidden>
+  <button class="dbtn dbtn--icon lightbox__close" id="lb-close" type="button" aria-label="Cerrar imagen"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  <figure><img id="lb-img" alt=""><figcaption id="lb-cap" class="mono"></figcaption></figure>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div class="cursor" id="cursor" aria-hidden="true"><span></span></div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
